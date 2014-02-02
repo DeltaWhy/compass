@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 require 'cinch'
+require './calc'
+require './ellipse'
 
 bot = Cinch::Bot.new do
     configure do |c|
@@ -69,6 +71,23 @@ end
 bot.rule any: /\Ahello compass\z/i, [:direct, :private] => "hello" do |m,cmd|
     greetings = ["Hello", "Hi", "Howdy", "Hey"]
     "#{greetings.sample} #{m.user.nick}!"
+end
+
+bot.rule any: /\A!ellipse ([0-9]+)( ([0-9]+))?\z/, [:direct, :private] => /\A!?ellipse ([0-9]+)( ([0-9]+))?\z/ do |m,cmd|
+    cmd =~ /\A!?ellipse ([0-9]+)( ([0-9]+))?\z/
+    xdia = $1.to_i
+    ydia = $3 ? $3.to_i : xdia
+    res = ellipse(xdia, ydia)
+    next unless res
+    res = "#{m.user.nick}: #{res}" if m.message != cmd
+    res
+end
+
+bot.rule [:direct, :private] => // do |m,cmd|
+    res = calc(cmd) rescue nil
+    next unless res
+    res = "#{m.user.nick}: #{res}" if m.message != cmd
+    res
 end
 
 bot.rule [:direct, :private] => // do |m,cmd|

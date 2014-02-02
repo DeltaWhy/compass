@@ -1,10 +1,10 @@
-#!/usr/bin/ruby
 @last = 0.0
 def calc(expr)
+    puts "calc(#{expr.inspect})"
     expr = expr.gsub('**','^')
     tokens = []
     pos = 0
-    until pos >= expr.length - 1
+    until pos >= expr.length
         pos += 1 while expr[pos] =~ /\s/
         case expr[pos]
         when '0'..'9','.'
@@ -31,6 +31,7 @@ def calc(expr)
             return nil
         end
     end
+    puts tokens.inspect
 
     #handle unary -
     for i in 0..(tokens.length)
@@ -39,6 +40,7 @@ def calc(expr)
             tokens[i] = '~'
         end
     end
+    puts tokens.inspect
 
     postfix = []
     stack = []
@@ -158,17 +160,4 @@ def calc(expr)
     end
 
     @last = stack[0]
-end
-
-print "> "
-until STDIN.eof
-    res = calc(STDIN.gets)
-    if Array === res
-        puts "(#{res.join(', ')})"
-    elsif res
-        puts res
-    else
-        puts "Error"
-    end
-    print "> "
 end
