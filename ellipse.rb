@@ -21,6 +21,7 @@ def ellipse(xdia, ydia)
     x = a
     y = (ydia%2 == 1 ? 0 : 0.5)
     segs = []
+    split = false
     seg = 1
     while x.to_i > 0
         #plot.call(x,y)
@@ -32,6 +33,10 @@ def ellipse(xdia, ydia)
         y += 1 if (abs(e_xy) < abs(e_y))
         if _x == x or _y == y
             seg += 1
+            if _y == y and !split
+                segs.insert(0,'/')
+                split = true
+            end
         else
             segs.insert(0,seg)
             seg = 1
@@ -46,11 +51,5 @@ def ellipse(xdia, ydia)
     segs.insert(0,seg)
     #plot.call(x,y)
     #grid.each {|line| puts line}
-    if segs.length%2 == 0
-        segs.insert(segs.length/2, '/')
-    else
-        segs.insert(segs.length/2, '/')
-        segs.insert(segs.length/2+1, '/')
-    end
     segs.join(", ").gsub(", /,"," /")
 end

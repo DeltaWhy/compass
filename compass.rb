@@ -77,6 +77,7 @@ bot.rule any: /\A!(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/, [:direct, :private] 
     cmd =~ /\A!?(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/
     xdia = $2.to_i
     ydia = $4 ? $4.to_i : xdia
+    next if xdia > 1000 || ydia > 1000
     res = ellipse(xdia, ydia)
     next unless res
     res = "#{m.user.nick}: #{res}" if m.message != cmd
