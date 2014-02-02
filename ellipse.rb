@@ -46,5 +46,11 @@ def ellipse(xdia, ydia)
     segs.insert(0,seg)
     #plot.call(x,y)
     #grid.each {|line| puts line}
-    segs.inspect
+    if segs.length%2 == 0
+        segs.insert(segs.length/2, '/')
+    else
+        segs.insert(segs.length/2, '/')
+        segs.insert(segs.length/2+1, '/')
+    end
+    segs.join(", ").gsub(", /,"," /")
 end

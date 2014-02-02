@@ -73,10 +73,10 @@ bot.rule any: /\Ahello compass\z/i, [:direct, :private] => "hello" do |m,cmd|
     "#{greetings.sample} #{m.user.nick}!"
 end
 
-bot.rule any: /\A!ellipse ([0-9]+)( ([0-9]+))?\z/, [:direct, :private] => /\A!?ellipse ([0-9]+)( ([0-9]+))?\z/ do |m,cmd|
-    cmd =~ /\A!?ellipse ([0-9]+)( ([0-9]+))?\z/
-    xdia = $1.to_i
-    ydia = $3 ? $3.to_i : xdia
+bot.rule any: /\A!(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/, [:direct, :private] => /\A!?(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/ do |m,cmd|
+    cmd =~ /\A!?(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/
+    xdia = $2.to_i
+    ydia = $4 ? $4.to_i : xdia
     res = ellipse(xdia, ydia)
     next unless res
     res = "#{m.user.nick}: #{res}" if m.message != cmd
