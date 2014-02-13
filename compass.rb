@@ -1,7 +1,11 @@
 #!/usr/bin/ruby
 require 'cinch'
+require 'dbm'
 require './calc'
 require './ellipse'
+
+$db = DBM.open('compass.db', 0644, DBM::WRCREAT)
+online = {}
 
 bot = Cinch::Bot.new do
     configure do |c|
@@ -66,6 +70,15 @@ bot = Cinch::Bot.new do
             end
         end
     end
+
+    on :join do |m|
+        online[m.user.nick.downcase] = true
+        $db["seen:#{m.user.nick.downcase}"] = Time.now.to_i
+    end
+    on :leaving do |m|
+        online[m.user.nick.downcase] = false
+        $db["seen:#{m.user.nick.downcase}"] = Time.now.to_i
+    end
 end
 
 bot.rule any: /\Ahello compass\z/i, [:direct, :private] => "hello" do |m,cmd|
@@ -84,6 +97,18 @@ bot.rule any: /\A!(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/, [:direct, :private] 
     res
 end
 
+bot.rule any: /\A!seen ([A-Za-z0-9_-]+)\z/ do |m, cmd|
+    cmd =~ /\A!seen ([A-Za-z0-9_-]+)\z/
+    player = $1
+    if online[player.downcase]
+        "#{$1} is online since "+ Time.at($db["seen:#{player.downcase}"].to_i).to_s
+    elsif $db["seen:#{player.downcase}"]
+        "#{$1} was last seen "+ Time.at($db["seen:#{player.downcase}"].to_i).to_s
+    else
+        "I've never seen #{$1}."
+    end
+end
+
 bot.rule [:direct, :private] => // do |m,cmd|
     res = calc(cmd) rescue nil
     next unless res
@@ -96,3 +121,8 @@ bot.rule [:direct, :private] => // do |m,cmd|
 end
 
 bot.start
+online.each do |(k,v)|
+    next unless v
+    $db["seen:#{k}"] = Time.now.to_i
+end
+$db.close
