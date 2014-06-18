@@ -109,6 +109,28 @@ bot.rule any: /\A!seen ([A-Za-z0-9_-]+)\z/ do |m, cmd|
     end
 end
 
+bot.rule any: /\A!roll ([0-9]*)d([0-9]+)\z/, [:direct, :private] => /\A!?roll ([0-9]*)d([0-9]+)\z/ do |m,cmd|
+    cmd =~ /\A!?roll ([0-9]*)d([0-9]+)\z/
+    n = $1.to_i
+    n = 1 if n == 0
+    sides = $2.to_i
+    sum = 0
+    n.times { sum += Random.rand(1..sides) }
+    res = sum.to_s
+    res = "#{m.user.nick}: #{res}" if m.message != cmd
+    res
+end
+
+bot.rule any: /\A!flip\z/, [:direct, :private] => /\A!?flip\z/ do |m,cmd|
+    res = ["heads","tails"].sample
+    res = "#{m.user.nick}: #{res}" if m.message != cmd
+    res
+end
+
+bot.rule any: /\A!?botsnack\z/i do |m,cmd|
+    ":D"
+end
+
 bot.rule [:direct, :private] => // do |m,cmd|
     res = calc(cmd) rescue nil
     next unless res
