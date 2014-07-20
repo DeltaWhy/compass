@@ -9,7 +9,7 @@ online = {}
 
 bot = Cinch::Bot.new do
     configure do |c|
-        c.server = 'cobblestone.miscjunk.net'
+        c.server = 'brick.miscjunk.net'
         c.nick = 'Compass'
         c.channels = ['#minecraft']
     end
@@ -129,6 +129,11 @@ end
 
 bot.rule any: /\A!?botsnack\z/i do |m,cmd|
     ":D"
+end
+
+bot.rule direct: /\A(.*) or (.*?)\??\z/i do |m,cmd|
+    cmd =~ /\A(.*) or (.*?)\??\z/i
+    [$1,$2].sample
 end
 
 bot.rule [:direct, :private] => // do |m,cmd|
