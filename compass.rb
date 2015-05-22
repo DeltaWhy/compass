@@ -117,6 +117,13 @@ bot.rule any: /\A!?botsnack\z/i do |m,cmd,nick|
     ":D"
 end
 
+bot.rule any: /\A!disapprove( (.+))?\z/ do |m,cmd,nick|
+    cmd =~ /\A!disapprove( (.+))?\z/
+    res = ["(•_•)", "(;¬_¬)", "( ͠° ͟ʖ ͡°)", "(－‸ლ)"].sample
+    res = "#{$2}: #{res}" if $2
+    res
+end
+
 bot.rule direct: /\A(.*) or (.*?)\??\z/i do |m,cmd,nick|
     cmd =~ /\A(.*) or (.*?)\??\z/i
     [$1,$2].sample
