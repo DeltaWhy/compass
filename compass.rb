@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 require 'cinch'
 require 'json'
+require 'net/http'
 require './calc'
 require './ellipse'
 require_relative 'plugins/link_info'
