@@ -54,10 +54,14 @@ bot = Cinch::Bot.new do
   end
 
   on :message do |m|
-    if m.user.nick =~ /SkypeBot_*/
-      m.message =~ /\A\<([^>]+)\> (.+)\z/
-      message = $2
-      nick = $1.split[0]
+    if m.user.nick =~ /SkypeBot_*/ or m.user.nick =~ /EiraBot[0-9]*/
+      begin
+        m.message =~ /\A\<([^>]+)\> (.+)\z/
+        message = $2
+        nick = $1.split[0]
+      rescue
+        next
+      end
     else
       message = m.message
       nick = m.user.nick
@@ -87,6 +91,33 @@ end
 bot.rule any: /\Ahello compass\z/i, [:direct, :private] => "hello" do |m,cmd,nick|
   greetings = ["Hello", "Hi", "Howdy", "Hey"]
   "#{greetings.sample} #{nick}!"
+end
+
+bot.rule any: /\A!join (.+)\z/ do |m,cmd,nick|
+  cmd =~ /\A!join (.+)\z/
+  if nick == "DeltaWhy"
+    bot.join $1
+    ""
+  else
+    "You're not the boss of me!"
+  end
+end
+
+bot.rule any: /\A!part( (.+))?\z/ do |m,cmd,nick|
+  cmd =~ /\A!part( (.+))?\z/
+  if nick == "DeltaWhy"
+    if $2
+      bot.part $2
+      ""
+    elsif m.channel
+      bot.part m.channel
+      ""
+    else
+      "What channel?"
+    end
+  else
+    "You're not the boss of me!"
+  end
 end
 
 bot.rule any: /\A!(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/, [:direct, :private] => /\A!?(circle|ellipse) ([0-9]+)( ([0-9]+))?\z/ do |m,cmd,nick|
