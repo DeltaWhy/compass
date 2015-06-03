@@ -54,7 +54,7 @@ bot = Cinch::Bot.new do
   end
 
   on :message do |m|
-    if m.user.nick =~ /SkypeBot_*/ or m.user.nick =~ /EiraBot[0-9]*/
+    if m.user.nick =~ /(Skype|Vanilla)Bot_*/ or m.user.nick =~ /EiraBot[0-9]*/
       begin
         m.message =~ /\A\<([^>]+)\> (.+)\z/
         message = $2
