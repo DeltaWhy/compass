@@ -171,7 +171,7 @@ bot.rule any: /\A!g(?:oogle)? (.+)\z/ do |m,cmd,nick|
   res = http.start { |server|
     server.request(req)
   }
-  result = JSON.parse(res.body)['responseData']['results'][0]['url']
+  result = JSON.parse(res.body)['responseData']['results'][0]['unescapedUrl']
   result
 end
 
@@ -186,7 +186,7 @@ bot.rule any: /\A!(?:gis|i(?:mage)?) (.+)\z/ do |m,cmd,nick|
   res = http.start { |server|
     server.request(req)
   }
-  result = JSON.parse(res.body)['responseData']['results'][0]['url']
+  result = JSON.parse(res.body)['responseData']['results'][0]['unescapedUrl']
   result
 end
 
@@ -201,7 +201,7 @@ bot.rule any: /\A!w(?:iki)? (.+)\z/ do |m,cmd,nick|
   res = http.start { |server|
     server.request(req)
   }
-  result = JSON.parse(res.body)['responseData']['results'][0]['url']
+  result = JSON.parse(res.body)['responseData']['results'][0]['unescapedUrl']
   result
 end
 
@@ -216,7 +216,22 @@ bot.rule any: /\A!s(?:o|tackoverflow)? (.+)\z/ do |m,cmd,nick|
   res = http.start { |server|
     server.request(req)
   }
-  result = JSON.parse(res.body)['responseData']['results'][0]['url']
+  result = JSON.parse(res.body)['responseData']['results'][0]['unescapedUrl']
+  result
+end
+
+bot.rule any: /\A!y(?:t|outube)? (.+)\z/ do |m,cmd,nick|
+  cmd =~ /\A!y(?:t|outube)? (.+)\z/
+  uri=URI.parse "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%s"\
+    % URI.escape("site:youtube.com #{$1}")
+  req = Net::HTTP::Get.new(uri.request_uri)
+  http = Net::HTTP.new(uri.host)
+  http.read_timeout = 5
+  http.open_timeout = 5
+  res = http.start { |server|
+    server.request(req)
+  }
+  result = JSON.parse(res.body)['responseData']['results'][0]['unescapedUrl']
   result
 end
 
