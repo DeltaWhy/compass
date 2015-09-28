@@ -160,6 +160,13 @@ bot.rule any: /\A!disapprove( (.+))?\z/ do |m,cmd,nick|
   res
 end
 
+bot.rule any: /\A!shrug( (.+))?\z/ do [m,cmd,nick]
+  cmd =~ /\A!shrug( (.+))?\z/
+  res = ["¯\_(ツ)_/¯"].sample
+  res = "#{$2}: #{res}" if $2
+  res
+end
+
 bot.rule any: /\A!g(?:oogle)? (.+)\z/ do |m,cmd,nick|
   cmd =~ /\A!g(?:oogle)? (.+)\z/
   uri=URI.parse "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%s"\
