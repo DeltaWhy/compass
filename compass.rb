@@ -162,7 +162,7 @@ end
 
 bot.rule any: /\A!shrug( (.+))?\z/ do |m,cmd,nick|
   cmd =~ /\A!shrug( (.+))?\z/
-  res = ["¯\_(ツ)_/¯"].sample
+  res = ["¯\\_(ツ)_/¯"].sample
   res = "#{$2}: #{res}" if $2
   res
 end
