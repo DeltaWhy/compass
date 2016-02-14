@@ -172,9 +172,10 @@ bot.rule any: /\A!(status|ping) ([a-z0-9.-]+)( ([0-9]+))?\z/ do |m,cmd,nick|
   cmd =~ /\A!(status|ping) ([a-z0-9.-]+)( ([0-9]+))?\z/
   begin
     resp = serverping($2, $3 | 25565)
-    playercount = resp['players']['online']
+    playercount = resp['players']['online'] rescue "unknown"
     players = resp['players']['sample'].map(lambda x: x['name']).join(", ") rescue "#{playercount} players"
-    "#{resp['description']['text']}. Online: #{players}."
+    description = resp['description']['text'] rescue resp['description'] rescue "Description not found"
+    "#{description}. Online: #{players.empty? ? "no one" : players}."
   rescue
     "Couldn't ping #{$2}."
   end
