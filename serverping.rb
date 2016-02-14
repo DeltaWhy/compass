@@ -1,5 +1,6 @@
 require 'socket'
 require 'json'
+require 'timeout'
 def readvarint(data)
     i = 0
     j = 0
@@ -16,20 +17,23 @@ def readvarint(data)
 end
 
 def serverping(address, port)
-    s = TCPSocket.new 'deltawhy.me', 25566
-    data = [0, 4, 'deltawhy.me'.length, 'deltawhy.me', 25566, 1].pack('cccA*nc')
-    data = [data.length, data].pack('ca*')
-    p data
-    s.send(data, 0)
-    s.send([1, 0].pack('cc'), 0)
+    Timeout.timeout(5) do
+        s = TCPSocket.new address, port
+        data = [0, 4, address.length, address, port, 1].pack('cccA*nc')
+        data = [data.length, data].pack('ca*')
+        s.send(data, 0)
+        s.send([1, 0].pack('cc'), 0)
 
-    resp = s.recv(1024).bytes
-    len = readvarint(resp)
-    raise 'Bad packet' unless resp.slice!(0) == 0
-    resp += s.recv(len - resp.length).bytes
-    s.close
+        resp = s.recv(1024).bytes
+        len = readvarint(resp) - 1
+        raise 'Bad packet' unless resp.slice!(0) == 0
+        until resp.length >= len
+            resp += s.recv(len - resp.length).bytes
+        end
+        s.close
 
-    readvarint(resp)
-    resp = resp.pack('c*')
-    return JSON.parse(resp)
+        readvarint(resp)
+        resp = resp.pack('c*')
+        return JSON.parse(resp)
+    end
 end
