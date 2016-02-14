@@ -4,6 +4,7 @@ require 'json'
 require 'net/http'
 require './calc'
 require './ellipse'
+require './serverping'
 require_relative 'plugins/link_info'
 
 bot = Cinch::Bot.new do
@@ -165,6 +166,15 @@ bot.rule any: /\A!shrug( (.+))?\z/ do |m,cmd,nick|
   res = ["¯\\_(ツ)_/¯"].sample
   res = "#{$2}: #{res}" if $2
   res
+end
+
+bot.rule any: /\A!(status|ping) ([a-z0-9.-]+)( ([0-9]+))?\z/ do |m,cmd,nick|
+  cmd =~ /\A!(status|ping) ([a-z0-9.-]+)( ([0-9]+))?\z/
+  begin
+    resp = serverping($2, $3 | 25565)
+  rescue
+    "Couldn't ping #{$2}."
+  end
 end
 
 bot.rule any: /\A!g(?:oogle)? (.+)\z/ do |m,cmd,nick|
