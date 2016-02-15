@@ -168,17 +168,19 @@ bot.rule any: /\A!shrug( (.+))?\z/ do |m,cmd,nick|
   res
 end
 
-bot.rule any: /\A!(status|ping) ([a-z0-9.-]+)( ([0-9]+))?\z/ do |m,cmd,nick|
-  cmd =~ /\A!(status|ping) ([a-z0-9.-]+)( ([0-9]+))?\z/
+bot.rule any: /\A!(status|ping) ([a-z0-9.-]+)([ :]([0-9]+))?\z/ do |m,cmd,nick|
+  cmd =~ /\A!(status|ping) ([a-z0-9.-]+)([ :]([0-9]+))?\z/
   begin
-    resp = serverping($2, $4.to_i | 25565)
+    port = $4 ? ($4.to_i) : nil
+    resp = serverping($2, port)
     playercount = resp['players']['online'] rescue "unknown"
-    players = resp['players']['sample'].map(lambda x: x['name']).join(", ") rescue "#{playercount} players"
+    players = resp['players']['sample'].map{|x| x['name']}.join(", ") rescue "#{playercount} players"
     description = resp['description']['text'] || resp['description'] rescue "Description not found"
-    "#{description}. Online: #{players.empty? ? "no one" : players}."
+    "#{description}. Online: #{playercount == 0 ? "no one" : players}."
   rescue => e
     p e
-    "Couldn't ping #{$2}."
+    puts e.backtrace
+    "Couldn't ping #{$2}#{port ? ":" : ""}#{port}."
   end
 end
 
